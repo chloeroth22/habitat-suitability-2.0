@@ -31,7 +31,9 @@ import xarray as xr
 import xrspatial as xrs
 
 # make reproducible file paths
-data_dir = os.path.join(pathlib.Path.home(), "earth-analytics", "data", "habitat")
+data_dir = os.path.join(
+    pathlib.Path.home(), "earth-analytics", "data", "habitat"
+)
 
 # make the directory
 os.makedirs(data_dir, exist_ok=True)
@@ -86,7 +88,9 @@ if not glob(gbif_pattern):
             time.sleep(5)
 
     # Download the data
-    download_info = occ.download_get(os.environ["GBIF_DOWNLOAD_KEY"], path=data_dir)
+    download_info = occ.download_get(
+        os.environ["GBIF_DOWNLOAD_KEY"], path=data_dir
+    )
 
     # Unzip it
     with zipfile.ZipFile(download_info["path"]) as download_zip:
@@ -102,11 +106,14 @@ gbif_df = pd.read_csv(gbif_path, delimiter="\t")
 # Make it spatial
 gbif_gdf = gpd.GeoDataFrame(
     gbif_df,
-    geometry=gpd.points_from_xy(gbif_df.decimalLongitude, gbif_df.decimalLatitude),
+    geometry=gpd.points_from_xy(
+        gbif_df.decimalLongitude, gbif_df.decimalLatitude
+    ),
     crs="EPSG:4326",
 )
 
-# Reproject GeoDataFrame to the same CRS as the basemap (Web Mercator, EPSG:3857)
+# Reproject GeoDataFrame to the same CRS as the basemap
+# (Web Mercator, EPSG:3857)
 gbif_gdf_merc = gbif_gdf.to_crs(epsg=3857)
 
 # Create a plot
@@ -123,7 +130,9 @@ ax.set_ylabel("Latitude")
 # Show the plot
 plt.show()
 
-# URL for the dataset (direct link) note this url is not working and I can't find the right one you have to go to the catalog and directly download it to your machine.
+# URL for the dataset (direct link) note this url is not working and
+# I can't find the right one you have to go to the catalog and directly
+# download it to your machine.
 # https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-download
 
 pa_url = "https://www.sciencebase.gov/catalog/item/652d4f80d34e44db0e2ee45c"
@@ -225,7 +234,7 @@ def polaris_download(gdf, soil_prop):
     Parameters
     ----------
     gdf : geopandas.GeoDataFrame
-        A GeoDataFrame containing the geometry that defines the area of interest.
+        A GeoDataFrame containing the geometry that defines the aoi.
         The bounds of the geometry will be used to determine the range of
         latitude and longitude for downloading rasters.
 
@@ -249,7 +258,9 @@ def polaris_download(gdf, soil_prop):
     )
 
     # Get the bounds from the GeoDataFrame
-    bounds_min_lon, bounds_min_lat, bounds_max_lon, bounds_max_lat = gdf.total_bounds
+    bounds_min_lon, bounds_min_lat, bounds_max_lon, bounds_max_lat = (
+        gdf.total_bounds
+    )
 
     # Creat rasters list
     soil_rasters = []
@@ -257,7 +268,7 @@ def polaris_download(gdf, soil_prop):
     # Loop through the longitude and latitude ranges based on the bounds
     for min_lon in range(floor(bounds_min_lon), ceil(bounds_max_lon)):
         for min_lat in range(floor(bounds_min_lat), ceil(bounds_max_lat)):
-            # Format the URL with the given soil property and bounding box values
+            # Format the URL with the given soil property and bounding box
             soil_url = soil_url_template.format(
                 soil_prop=soil_prop,
                 min_lat=min_lat,
@@ -267,7 +278,9 @@ def polaris_download(gdf, soil_prop):
             )
 
             # Open the raster using rioxarray
-            soil_da = rxr.open_rasterio(soil_url, mask_and_scale=True).squeeze()
+            soil_da = rxr.open_rasterio(
+                soil_url, mask_and_scale=True
+            ).squeeze()
             soil_rasters.append(soil_da)
 
     # Merge rasters
@@ -387,7 +400,8 @@ def srtm_download(directory_name, gdf):
 
     # Open rasters
     srtm_rasters = [
-        rxr.open_rasterio(file, mask_and_scale=True).squeeze() for file in files_list
+        rxr.open_rasterio(file, mask_and_scale=True).squeeze()
+        for file in files_list
     ]
 
     # Merge the rasters
@@ -471,24 +485,27 @@ def convert_longitude(longitude):
 
 def download_maca(site_name, site_gdf, emissions_scenario, year_min, year_max):
     """
-    Download and process projected climate data for a given site, emissions scenario,
+    Download and process projected climate data for a given site, emissions,
     and Global Climate Models (GCMs) for a specified time range.
 
-    This function constructs URLs to access climate projection data from the MACA
-    (Multivariate Adaptive Constructed Analogs) dataset, clips the data to the
-    specified site boundary, and returns a DataArray with climate variables.
+    This function constructs URLs to access climate projection data from the
+    MACA (Multivariate Adaptive Constructed Analogs) dataset, clips the data
+    to the site boundary, and returns a DataArray with climate variables.
 
     Args:
-        site_name (str): The name of the site for which climate data is requested.
-        site_gdf (GeoDataFrame): A GeoDataFrame that contains the geographical boundary of the site.
-        emissions_scenario (str): The emissions scenario to use (e.g., 'RCP8.5').
-        year_min (int): The start year of the period for which data is requested.
+        site_name (str): The name of the site for which data is requested.
+        site_gdf (GeoDataFrame): A GeoDataFrame that contains the
+            geographical boundary of the site.
+        emissions_scenario (str): The emissions scenario to use.
+        year_min (int): The start year of the period for which data is
+            requested.
         year_max (int): The end year of the period for which data is requested.
 
     Returns:
-        dict: A dict containing eight  DataArrays, one for each climate quantity
-               and model combination: (hd, hw, cd, cw).
-               Each DataArray contains the climate data for the given site and time range.
+        dict: A dict containing eight  DataArrays, one for each climate
+        quantity and model combination: (hd, hw, cd, cw).
+        Each DataArray contains the climate data for the given site and time
+        range.
     """
 
     # Set up dicts for GCM
@@ -518,7 +535,9 @@ def download_maca(site_name, site_gdf, emissions_scenario, year_min, year_max):
         # Loop through tasmax, tasmin, and pr
         for climate_quantity in climate_quantities:
 
-            climate_q_scenario = climate_quantity_scenario_dict[climate_quantity]
+            climate_q_scenario = climate_quantity_scenario_dict[
+                climate_quantity
+            ]
             cq_longname = climate_q_scenario["cq_longname"]
             cq_function = climate_q_scenario["cq_function"]
 
@@ -536,7 +555,9 @@ def download_maca(site_name, site_gdf, emissions_scenario, year_min, year_max):
                 )
 
                 # Open the dataset from the constructed URL using xarray
-                maca_da = xr.open_dataset(maca_url, mask_and_scale=True).squeeze()
+                maca_da = xr.open_dataset(
+                    maca_url, mask_and_scale=True
+                ).squeeze()
 
                 # Clip the dataset to the site boundary
                 bounds = site_gdf.to_crs(maca_da.rio.crs).total_bounds
@@ -551,7 +572,9 @@ def download_maca(site_name, site_gdf, emissions_scenario, year_min, year_max):
                         ],
                     )
                 )
-                maca_da = maca_da.rio.set_spatial_dims(x_dim="lon", y_dim="lat")
+                maca_da = maca_da.rio.set_spatial_dims(
+                    x_dim="lon", y_dim="lat"
+                )
                 maca_da = maca_da.rio.clip_box(*bounds)
 
                 # Extract only the relevant variable from the dataset
@@ -561,7 +584,7 @@ def download_maca(site_name, site_gdf, emissions_scenario, year_min, year_max):
                 # Store the DataArray in the list
                 maca_das.append(maca_da)
 
-            # Concatenate all the DataArrays along the 'time' dimension and calculate the maximum over time
+            # Concatenate all the DataArrays along the 'time' dimension
             if cq_function == "max":
                 maca_da = xr.concat(maca_das, dim="time").max("time")
 
@@ -628,7 +651,8 @@ def plot_4(p1, title1, p2, title2, p3, title3, p4, title4):
 
 def harmonize_rasters(rasters, reference_raster):
     """
-    Harmonizes a list of rasters to match the coordinates of a reference dataset.
+    Harmonizes a list of rasters to match the coordinates of a reference
+    dataset.
 
     Parameters
     ----------
@@ -730,7 +754,8 @@ def fuzzy_logic_rasters(rasters, variable_names):
     - rasters: list of 2D array-like (e.g., xarray.DataArray, numpy array)
       List of raster data to which fuzzy logic will be applied.
     - variable_names: list of str
-      List of variable names (e.g., 'precip', 'sand', 'ph', etc.) to match with rasters.
+      List of variable names (e.g., 'precip', 'sand', 'ph', etc.) to match with
+      rasters.
     Returns:
     - fuzzy_rasters: list of 2D array-like
       List of transformed rasters after applying the fuzzy logic function.
@@ -779,10 +804,12 @@ def fuzzy_logic_rasters(rasters, variable_names):
         # Apply the trapezoidal fuzzy membership function
         raster_fuzz.values = np.reshape(
             skfuzzy.trapmf(
-                raster.values.flatten(),  # Flatten the raster data for processing
+                # Flatten the raster data for processing
+                raster.values.flatten(),
                 params,  # Trapezoidal membership function breakpoints
             ),
-            shape,  # Reshape the resulting membership values to match the original shape
+            # Reshape the resulting membership values to match the original shape
+            shape,
         )
 
         # Append the fuzzified raster to the list
@@ -816,8 +843,12 @@ orpi_hd_1950, orpi_hw_1950, orpi_cd_1950, orpi_cw_1950 = multiply_rasters(
 orpi_hd_2066, orpi_hw_2066, orpi_cd_2066, orpi_cw_2066 = multiply_rasters(
     orpi_fuzz_2066
 )
-tmp_hd_1950, tmp_hw_1950, tmp_cd_1950, tmp_cw_1950 = multiply_rasters(tmp_fuzz_1950)
-tmp_hd_2066, tmp_hw_2066, tmp_cd_2066, tmp_cw_2066 = multiply_rasters(tmp_fuzz_2066)
+tmp_hd_1950, tmp_hw_1950, tmp_cd_1950, tmp_cw_1950 = multiply_rasters(
+    tmp_fuzz_1950
+)
+tmp_hd_2066, tmp_hw_2066, tmp_cd_2066, tmp_cw_2066 = multiply_rasters(
+    tmp_fuzz_2066
+)
 
 # Plot the habitat suitability
 plot_4(
