@@ -122,22 +122,22 @@ Northwest Knowledge Network. (n.d.). REACCH climate CMIP5 MACAV2 catalog. Northw
 I used the scikit-fuzzy library trapezoidal function to build a fuzzy model based on the known optimal values. To train the habitat suitability model I determined the optimal values, then for each **digital number** in each raster, I assigned a **continuous** value from 0 to 1 for how close that grid square is to the optimum range (1=optimal, 0=incompatible). I combined my layers by multiplying them together to get a single suitability score for each grid square on my raster. 
 
 <img 
-  src="img/orpi_1950" 
+  src="img/orpi_1950.png" 
   alt="orpi 1950" 
   style="max-width:100%; height:auto; display:block; margin-left:auto; margin-right:auto;">
 
   <img 
-  src="img/orpi_2066" 
+  src="img/orpi_2066.png" 
   alt="orpi 2066" 
   style="max-width:100%; height:auto; display:block; margin-left:auto; margin-right:auto;">
   
   <img 
-  src="img/tmp_1950" 
+  src="img/tmp_1950.png" 
   alt="orpi 1950" 
   style="max-width:100%; height:auto; display:block; margin-left:auto; margin-right:auto;">
 
   <img 
-  src="img/tmp_2066" 
+  src="img/tmp_2066.png" 
   alt="tmp 2066" 
   style="max-width:100%; height:auto; display:block; margin-left:auto; margin-right:auto;">
 
