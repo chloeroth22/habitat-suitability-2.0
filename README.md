@@ -121,6 +121,24 @@ Northwest Knowledge Network. (n.d.). REACCH climate CMIP5 MACAV2 catalog. Northw
 #### Develop a Fuzzy Logic Model
 I used the scikit-fuzzy library trapezoidal function to build a fuzzy model based on the known optimal values. To train the habitat suitability model I determined the optimal values, then for each **digital number** in each raster, I assigned a **continuous** value from 0 to 1 for how close that grid square is to the optimum range (1=optimal, 0=incompatible). I combined my layers by multiplying them together to get a single suitability score for each grid square on my raster. 
 
-Insert Plots here
+<img 
+  src="img/orpi_1950" 
+  alt="orpi 1950" 
+  style="max-width:100%; height:auto; display:block; margin-left:auto; margin-right:auto;">
+
+  <img 
+  src="img/orpi_2066" 
+  alt="orpi 2066" 
+  style="max-width:100%; height:auto; display:block; margin-left:auto; margin-right:auto;">
+  
+  <img 
+  src="img/tmp_1950" 
+  alt="orpi 1950" 
+  style="max-width:100%; height:auto; display:block; margin-left:auto; margin-right:auto;">
+
+  <img 
+  src="img/tmp_2066" 
+  alt="tmp 2066" 
+  style="max-width:100%; height:auto; display:block; margin-left:auto; margin-right:auto;">
 
 Looking at my plots I have a lot of concerns about the quality of my data and processing. It looks like clay and slope were very compatible with the regions, but pH, temperature, and precipitation were not very compatible, even in the historic models. In the future I would like to overlay the GBIF occurrences data to get a better sense for where the species is currently occuring so I can assess the accuracy of my model better. Also, I think I should have picked a more marginal species and more marginal sites so I could have better seen the effects of changes in temperature and precipitation. Additionally I had some issues clipping so there are spots in my plots that are marked as compatible, but they don't actually contain data. There were reprojecting issues, which may be due to order of operations issues and being unable to clip the climate data as tightly as I was able to clip the soil and elevation data. Finally, I would pick a species that had more accurate and readily available optimal conditions data available. 
